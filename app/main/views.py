@@ -28,14 +28,16 @@ def common_list(DynamicModel, view):
 
     # 查询列表
     query = DynamicModel.select()
+    # 获得所有数据
     total_count = query.count()
 
     # 处理分页
     if page: query = query.paginate(page, length)
-
-    dict = {'content': utils.query_to_list(query), 'total_count': total_count,
-            'total_page': math.ceil(total_count / length), 'page': page, 'length': length}
-    return render_template(view, form=dict, current_user=current_user)
+    content = utils.query_to_list(query)
+    total_page = math.ceil(total_count / length)
+    diction = {'content': content, 'total_count': total_count,
+            'total_page': total_page, 'page': page, 'length': length}
+    return render_template(view, form=diction, current_user=current_user)
 
 
 # 通用单模型查询&新增&修改

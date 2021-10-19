@@ -19,7 +19,7 @@ class BaseModel(Model):
 
     def __str__(self):
         r = {}
-        for k in self._data.keys():
+        for k in self.__data__.keys():
             try:
                 r[k] = str(getattr(self, k))
             except:

@@ -52,7 +52,7 @@ def dict_to_obj(dict, obj, exclude=None):
 
 # peewee转dict
 def obj_to_dict(obj, exclude=None):
-    dict = obj.__dict__['_data']
+    dict = obj.__dict__['__data__']
     if exclude:
         for key in exclude:
             if key in dict: dict.pop(key)
@@ -60,6 +60,7 @@ def obj_to_dict(obj, exclude=None):
 
 
 # peewee转list
+# 这个地方转化的时候有bug
 def query_to_list(query, exclude=None):
     list = []
     for obj in query:

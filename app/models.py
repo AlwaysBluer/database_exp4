@@ -38,7 +38,7 @@ class User(UserMixin, BaseModel):
     status = BooleanField(default=True)  # 生效失效标识
 
     def verify_password(self, raw_password):
-        return check_password_hash(self.password, raw_password)
+        return self.password == raw_password
 
 
 # 通知人配置

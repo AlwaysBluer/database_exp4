@@ -1,0 +1,7 @@
+1.make clear what happen when the request is posted to the server
+2.replace the content of cftnotify with the dish
+3.when a user make a deal the dishpage should show on the bottom of the webpage
+
+task:
+1. 商铺信息展示：storelist
+2. 商铺信息编辑: storeedit(新增，修改，删除)

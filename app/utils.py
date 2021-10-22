@@ -110,6 +110,9 @@ def model_to_form(model, form):
             field = form.__getitem__(k)
             field.data = v
             form.__setattr__(k, field)
+#model to dict
+def model_to_dict(model):
+    dict = {}
 
 
 def flash_errors(form):

@@ -3,15 +3,17 @@ import math
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import utils
-from app.models import CfgNotify
-from app.main.forms import CfgNotifyForm
+from app.models import CfgNotify, store, canteen
+from app.main.forms import CfgNotifyForm, StoreForm
 from . import main
 
 logger = get_logger(__name__)
 cfg = get_config()
 
+
+
 # 通用列表查询
-def common_list(DynamicModel, view):
+def common_list(DynamicModel,view, ReliantModel=None):
     # 接收参数
     action = request.args.get('action')
     id = request.args.get('id')
@@ -21,7 +23,8 @@ def common_list(DynamicModel, view):
     # 删除操作
     if action == 'del' and id:
         try:
-            DynamicModel.get(DynamicModel.id == id).delete_instance()
+            model = DynamicModel.get(DynamicModel.id == id)
+            model.delete_instance()
             flash('删除成功')
         except:
             flash('删除失败')
@@ -37,8 +40,7 @@ def common_list(DynamicModel, view):
     total_page = math.ceil(total_count / length)
     diction = {'content': content, 'total_count': total_count,
             'total_page': total_page, 'page': page, 'length': length}
-    return render_template(view, form=diction, current_user=current_user)
-
+    return render_template(view, form=diction, reliant=ReliantModel, current_user=current_user)
 
 # 通用单模型查询&新增&修改
 def common_edit(DynamicModel, form, view):
@@ -61,8 +63,14 @@ def common_edit(DynamicModel, form, view):
         if form.validate_on_submit():
             model = DynamicModel()
             utils.form_to_model(form, model)
-            model.save()
-            flash('保存成功')
+            # store_num = model.save()
+            # print(store_num)
+            dict_ = utils.obj_to_dict(model) #model转字典
+            try:
+                DynamicModel.create(**dict_)
+                flash('保存成功')
+            except:
+                utils.flash_errors(form)
         else:
             utils.flash_errors(form)
     return render_template(view, form=form, current_user=current_user)
@@ -86,11 +94,14 @@ def index():
 @main.route('/notifylist', methods=['GET', 'POST'])
 @login_required
 def notifylist():
-    return common_list(CfgNotify, 'notifylist.html')
+    # return common_list(DynamicModel=CfgNotify, view='notifylist.html')
+    return common_list(DynamicModel=store,ReliantModel=canteen, view='storelist.html')
 
 
 # 通知方式配置
 @main.route('/notifyedit', methods=['GET', 'POST'])
 @login_required
 def notifyedit():
-    return common_edit(CfgNotify, CfgNotifyForm(), 'notifyedit.html')
+    # return common_edit(CfgNotify, CfgNotifyForm(), 'notifyedit.html')
+    return common_edit(DynamicModel=store, form=StoreForm(), view='storeedit.html')
+

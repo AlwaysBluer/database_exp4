@@ -122,3 +122,6 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ))
+
+
+# def now_to_datetime(datetime):

@@ -3,8 +3,8 @@ import math
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import utils
-from app.models import CfgNotify, store, canteen
-from app.main.forms import CfgNotifyForm, StoreForm
+from app.models import CfgNotify, store, canteen, dish, user_info, deal
+from app.main.forms import CfgNotifyForm, StoreForm, DishForm, UserForm, DealForm
 from . import main
 
 logger = get_logger(__name__)
@@ -105,3 +105,38 @@ def notifyedit():
     # return common_edit(CfgNotify, CfgNotifyForm(), 'notifyedit.html')
     return common_edit(DynamicModel=store, form=StoreForm(), view='storeedit.html')
 
+#查询菜品信息
+@main.route('/dishlist', methods=['GET', 'POST'])
+@login_required
+def dishlist():
+    return common_list(DynamicModel=dish, ReliantModel=store, view='dishlist.html')
+
+#编辑菜品信息
+@main.route('/dishedit', methods=['GET', 'POST'])
+@login_required
+def dishedit():
+    return common_edit(DynamicModel=dish, form=DishForm(), view='dishedit.html')
+
+#查询用户信息
+@main.route('/userlist', methods=['GET', 'POST'])
+@login_required
+def userlist():
+    return common_list(DynamicModel=user_info, ReliantModel=None, view='userlist.html')
+
+#编辑用户信息
+@main.route('/useredit', methods=['GET', 'POST'])
+@login_required
+def useredit():
+    return common_edit(DynamicModel=user_info, form=UserForm(), view='useredit.html')
+
+#查询订单信息
+@main.route('/deallist', methods=['GET', 'POST'])
+@login_required
+def deallist():
+    return common_list(DynamicModel=deal, ReliantModel=user_info, view='deallist.html')
+
+#编辑订单信息
+@main.route('/dealedit', methods=['GET', 'POST'])
+@login_required
+def dealedit():
+    return common_edit(DynamicModel=deal, form=DealForm(), view='dealedit.html')

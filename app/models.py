@@ -75,10 +75,10 @@ class dish(BaseModel):
     is_on_sale = BooleanField()
     dish_state = BooleanField()
     store_id = ForeignKeyField(store, related_name="dishes")
-    #store_id作为外键，关联的是一个定义好的模型model，必须要写明白
+    #store_id作为外键，关联的是一个定义好的模型model的主键，
 
 #user
-class user_info(BaseModel):
+class user_info(UserMixin, BaseModel):
     id = CharField(primary_key=True)
     user_state = BooleanField()
     user_passwd = CharField()
@@ -107,14 +107,14 @@ class dish_deal(BaseModel):
     dish_id = ForeignKeyField(model=dish, related_name='dish_deals')
     deal_id = ForeignKeyField(model=deal, related_name='dish_deals')
 
-class store_manager_info(BaseModel):
+class store_manager_info(UserMixin, BaseModel):
     id = CharField(primary_key=True)
     store_id = ForeignKeyField(store, related_name='store_managers')
     store_manager_passwd = CharField()
     store_manager_state = BooleanField()
     store_manager_telenum = CharField()
 
-class canteen_manager_info(BaseModel):
+class canteen_manager_info(UserMixin, BaseModel):
     id = CharField(primary_key=True)
     canteen_id = ForeignKeyField(canteen, related_name='canteen_managers')
     canteen_manager_passwd = CharField()

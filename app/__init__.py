@@ -7,6 +7,7 @@ import os
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
+#如果当login_required没有登录的时候，那么会通过login_view跳转到login函数
 login_manager.login_view = 'auth.login'
 fileConfig(r"C:\Users\jqf13\Desktop\flask-adminlte-scaffold\conf\log-app.conf")
 
@@ -36,3 +37,4 @@ def create_app(config_name):
     app.register_blueprint(auth_blueprint)
 
     return app
+

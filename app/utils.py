@@ -110,9 +110,7 @@ def model_to_form(model, form):
             field = form.__getitem__(k)
             field.data = v
             form.__setattr__(k, field)
-#model to dict
-def model_to_dict(model):
-    dict = {}
+
 
 
 def flash_errors(form):
@@ -123,5 +121,16 @@ def flash_errors(form):
                 error
             ))
 
+def strID_increase(strID):
+    value = int(strID) + 1
+    strID = str(value)
+    str_ = strID
+    lenth = 5
+    while len(str_) < lenth:
+        if len(str_) >= lenth:
+            return str_
+        else:
+            str_ = '0' + str_
+    return str_
 
 # def now_to_datetime(datetime):

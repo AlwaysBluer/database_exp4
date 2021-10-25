@@ -53,7 +53,7 @@ class DealForm(FlaskForm):
     is_finish = BooleanField("是否完成", default=False)
     deal_state = BooleanField("订单状态", default=True)
     deal_begin_time = DateTimeField('开始时间',default =datetime.now())
-    deal_finish_time = DateTimeField('结束时间', default = datetime.now())
+    deal_finish_time = DateTimeField('结束时间', default = None)
     # user_id = StringField('用户编号', validators=[DataRequired(message='不能为空'), Length(5, message='长度为5')])
     user_id = SelectField('所属用户', choices=[(obj.__dict__['__data__']['id'],
                                                obj.__dict__['__data__']['user_name']) for obj in query])

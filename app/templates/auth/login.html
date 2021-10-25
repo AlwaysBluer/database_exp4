@@ -23,16 +23,16 @@
         <b>系统登录</b>
     </div>
     <div class="login-box-body">
-        <p class="login-box-msg">请输入管理员帐户及密码</p>
+        <p class="login-box-msg">请输入选择登录类型并输入帐户及密码</p>
         <form method="post">
             {{form.hidden_tag()}}
 {#           有更改#}
-{#            <div class="form-group">#}
-{#                {{form.user_type(class_="form-control select2",placeholder="请输入用户类型")}}#}
-{#                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>#}
-{#            </div>#}
+            <div class="form-group">
+                {{form.user_type(class_="form-control select2",placeholder="请输入用户类型")}}
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
             <div class="form-group has-feedback">
-                {{form.username(class_="form-control",placeholder="用户名")}}
+                {{form.id(class_="form-control",placeholder="用户id")}}
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">

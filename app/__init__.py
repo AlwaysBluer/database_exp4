@@ -8,7 +8,8 @@ import os
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 #如果当login_required没有登录的时候，那么会通过login_view跳转到login函数
-login_manager.login_view = 'auth.login'
+# login_manager.login_view = 'auth.login'
+login_manager.login_view = 'auth.custom_login'
 fileConfig(r"C:\Users\jqf13\Desktop\flask-adminlte-scaffold\conf\log-app.conf")
 
 def get_logger(name):
@@ -25,6 +26,7 @@ def get_config():
 
 def create_app(config_name):
     app = Flask(__name__)
+    app.config['DEBUG'] = True
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 

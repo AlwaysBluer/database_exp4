@@ -10,8 +10,18 @@ from datetime import datetime
 # #     obj_dict = obj.__dict__['__data__']
 # #     query_list.append((obj_dict['id'],obj_dict['notify_name']))
 # print(query_list)
-datetime_ = datetime.now().strftime('%Y-%m-%d %H:%M')
-print(datetime_)
+def strID_increase(strID):
+    value = int(strID) + 1
+    strID = str(value)
+    str_ = strID
+    lenth = 5
+    while len(str_) < lenth:
+        if len(str_) >= lenth:
+            return str_
+        else:
+            str_ = '0' + str_
+    return str_
 
-
+id_='1'
+print(strID_increase(strID=id_))
 

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "user_base.html" %}
 
 {% block title %}商铺查询{% endblock %}
 {% block navbar %}
@@ -26,29 +26,35 @@
                 <th>是否完成</th>
                 <th>订单开始时间</th>
                 <th>订单完成时间</th>
-                <th>用户昵称</th>
-                <th>状态管理</th>>
-                <th>编辑</th>
-                <th>删除</th>
+                {% if not (current_user.user_type == 'user') %}
+                    <th>用户昵称</th>
+                    <th>状态管理</th>>
+                    <th>编辑</th>
+                    <th>删除</th>
+                {% endif %}
             </tr>
             {% for row in form.content %}
             <tr>
                 <td>{{row.id}}</td>
                 <td>{{"完成" if row.is_finish else "未完成"}}</td>
                 <td>{{row.deal_begin_time.strftime('%Y-%m-%d %H:%M')}}</td>
-                <td>{{reliant.get(id=row.user_id).user_name}}</td>
-                <td>
-                    {% if row.deal_state %}
-                    <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
-                           data-size="mini" checked>
-                    {% else %}
-                    <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
-                           data-size="mini">
-                    {% endif %}
-                </td>
-                <td><a class='fa fa-lg fa-edit text-light-blue'
-                       href='{{ url_for("main.dealedit", id=row.id) }}'></a></td>
-                <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row.id}}'></a></td>
+                <td>{{row.deal_finish_time.strftime('%Y-%m-%d %H:%M')}}</td>
+                {% if not (current_user.user_type == 'user') %}
+                    <td>{{reliant.get(id=row.user_id).user_name}}</td>
+                    <td>
+                        {% if row.deal_state %}
+                        <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
+                               data-size="mini" checked>
+                        {% else %}
+                        <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
+                               data-size="mini">
+                        {% endif %}
+                    </td>
+                    <td><a class='fa fa-lg fa-edit text-light-blue'
+                           href='{{ url_for("main.dealedit", id=row.id) }}'></a></td>
+                    <td><a class='fa fa-lg fa-warning text-red'
+                           href='?action=del&id={{row.id}}'></a></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>

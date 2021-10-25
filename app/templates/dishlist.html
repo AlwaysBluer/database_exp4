@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "user_base.html" %}
 
 {% block title %}食堂管理{% endblock %}
 {% block navbar %}
@@ -27,9 +27,14 @@
                 <th>店铺名称</th>
                 <th>菜品价格</th>
                 <th>是否在售</th>
-                <th>状态</th>
-                <th>编辑</th>
-                <th>删除</th>
+                {% if not (current_user.user_type=='user') %}
+                    <th>状态</th>
+                    <th>编辑</th>
+                    <th>删除</th>
+                {% endif %}
+                {% if (current_user.user_type=='user') %}
+                    <th>点菜<th>
+                {% endif  %}
             </tr>
             {% for row in form.content %}
             <tr>
@@ -38,18 +43,24 @@
                 <td>{{reliant.get(id=row.store_id).store_name}}</td>
                 <td>{{row.dish_price}}</td>
                 <td>{{'在售' if row.is_on_sale else '未售卖'}}</td>
-                <td>
-                    {% if row.is_on_sale %}
-                    <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
-                           data-size="mini" checked>
-                    {% else %}
-                    <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
-                           data-size="mini">
-                    {% endif %}
-                </td>
+                {% if not (current_user.user_type=='user') %}
+                    <td>
+                        {% if row.is_on_sale %}
+                        <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
+                               data-size="mini" checked>
+                        {% else %}
+                        <input type="checkbox" data-id="{{row.id}}" class="status" data-on-text="生效" data-off-text="失效"
+                               data-size="mini">
+                        {% endif %}
+                    </td>
                 <td><a class='fa fa-lg fa-edit text-light-blue'
                        href='{{ url_for("main.dishedit", id=row.id) }}'></a></td>
                 <td><a class='fa fa-lg fa-warning text-red' href='?action=del&id={{row.id}}'></a></td>
+                {% endif %}
+                {% if (current_user.user_type=='user') %}
+                    <td><a class='fa fa-lg fa-edit text-light-blue'
+                       href='{{ url_for("main.orderdish", dish_id=row.id) }}'></a></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>

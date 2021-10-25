@@ -1,14 +1,30 @@
 from app import get_logger, get_config
 import math
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, session
 from flask_login import login_required, current_user
 from app import utils
-from app.models import CfgNotify, store, canteen, dish, user_info, deal
+from app.models import CfgNotify, store, canteen, dish, user_info, deal, store_manager_info
 from app.main.forms import CfgNotifyForm, StoreForm, DishForm, UserForm, DealForm
 from . import main
+import datetime
 
 logger = get_logger(__name__)
 cfg = get_config()
+
+
+def store_query_filter(DynamicModel, id):
+    #店铺要筛选掉不属于它的菜品，（dynamicmodel : dish, filter:store_id）
+    # 不属于它的deal(dynamicmodel:deal, filter:store_id)
+    #id是用户id
+    model = current_user
+    store_id = model.store_id #所属商铺编号
+    query = DynamicModel.select().where(DynamicModel.store_id == store_id)
+    return query
+
+def user_query_filter(DynamicModel, id):
+# 顾客要筛选掉不属于它的deal(dynamicmodel:deal, filter:user_id)
+    query = DynamicModel.select().where(DynamicModel.user_id == id)
+    return query
 
 
 
@@ -30,8 +46,16 @@ def common_list(DynamicModel,view, ReliantModel=None):
             flash('删除失败')
 
     # 查询列表
-    query = DynamicModel.select()
+    # query = DynamicModel.select()
+    print('current_user:', current_user.user_type)
+    print('current_user id:', current_user)
+    if current_user.user_type ==  'user' and DynamicModel == deal:
+        query = user_query_filter(DynamicModel=DynamicModel, id=current_user.id)
+    elif current_user.user_type == 'store_manager':
+        query = store_query_filter(DynamicModel=DynamicModel, id=current_user.id)
     # 获得所有数据
+    else:
+        query = DynamicModel.select()
     total_count = query.count()
 
     # 处理分页
@@ -80,14 +104,23 @@ def common_edit(DynamicModel, form, view):
 @main.route('/', methods=['GET'])
 @login_required
 def root():
-    return redirect(url_for('main.index'))
+    # # return redirect(url_for('main.index'))
+     return redirect(url_for('main.index'))
 
 
 # 首页
 @main.route('/index', methods=['GET'])
-@login_required
+@login_required#直接就是食堂管理员
 def index():
-    return render_template('index.html', current_user=current_user)
+    if session['login_type'] == 'user':
+        return render_template('user_index.html', current_user=current_user)
+    elif session['login_type'] == 'canteen_manager':
+        return render_template('index.html', current_user=current_user)
+    elif session['login_type'] == 'store_manager':
+        return render_template('store_manager_index.html', current_user=current_user)
+    else:
+        return render_template('errors/404.html')
+
 
 
 # 通知方式查询
@@ -109,6 +142,10 @@ def notifyedit():
 @main.route('/dishlist', methods=['GET', 'POST'])
 @login_required
 def dishlist():
+    # if current_user.user_type == 'user':
+    #     return common_list(DynamicModel=dish, ReliantModel=store, view='dishlist.html')
+    # elif current_user.user_type == 'store_manager':
+    #     return common_list(DynamicModel=dish, ReliantModel=store, view='')
     return common_list(DynamicModel=dish, ReliantModel=store, view='dishlist.html')
 
 #编辑菜品信息
@@ -140,3 +177,27 @@ def deallist():
 @login_required
 def dealedit():
     return common_edit(DynamicModel=deal, form=DealForm(), view='dealedit.html')
+
+@main.route('/oderdish/<dish_id>', methods=['GET', 'POST'])
+@login_required
+def orderdish(dish_id):
+
+    model = dish.get(dish.id == dish_id)
+    store_id = model.store_id
+    create_deal(store_id)
+    return common_list(DynamicModel=deal, ReliantModel=user_info, view='deallist.html')
+
+
+
+def create_deal(store_id):
+    query = deal.select()
+    num = query.count()
+    deal_dict = {}
+    deal_dict['id'] = utils.strID_increase(num)
+    deal_dict['is_finish'] = False
+    deal_dict['deal_begin_time'] = datetime.datetime.now()
+    deal_dict['deal_finish_time'] = datetime.datetime.now()
+    deal_dict['user_id'] = current_user.id
+    deal_dict['store_id'] = store_id
+    deal.create(**deal_dict)
+    flash('创建成功')

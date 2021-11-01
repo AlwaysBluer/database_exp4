@@ -49,7 +49,7 @@ class UserForm(FlaskForm):
 
 class DealForm(FlaskForm):
     query = user_info.select()
-    id = StringField('订单编号', validators=[DataRequired(message='不能为空'), Length(7, message='长度为7')])
+    id = StringField('订单编号', validators=[DataRequired(message='不能为空'), Length(5, message='长度为7')])
     is_finish = BooleanField("是否完成", default=False)
     deal_state = BooleanField("订单状态", default=True)
     deal_begin_time = DateTimeField('开始时间',default =datetime.now())

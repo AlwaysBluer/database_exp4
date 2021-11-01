@@ -1,15 +1,9 @@
 from app.models import User
-from app.models import CfgNotify
+from app.models import CfgNotify, deal
 from peewee import Model
 from app.utils import query_to_list
 from datetime import datetime
-# query = CfgNotify.select()
-# query_list = [(obj.__dict__['__data__']['id'], obj.__dict__['__data__']['notify_name']) for obj in query]
-# # for obj in query:
-# #     print(obj.__dict__['__data__'])
-# #     obj_dict = obj.__dict__['__data__']
-# #     query_list.append((obj_dict['id'],obj_dict['notify_name']))
-# print(query_list)
+
 def strID_increase(strID):
     value = int(strID) + 1
     strID = str(value)
@@ -22,6 +16,8 @@ def strID_increase(strID):
             str_ = '0' + str_
     return str_
 
-id_='1'
-print(strID_increase(strID=id_))
+query = deal.select().order_by(deal.id.desc())
+query = query_to_list(query)
+obj = query[0]
+print(obj['id'])
 

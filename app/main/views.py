@@ -87,13 +87,12 @@ def common_edit(DynamicModel, form, view):
         if form.validate_on_submit():
             model = DynamicModel()
             utils.form_to_model(form, model)
-            # store_num = model.save()
-            # print(store_num)
             dict_ = utils.obj_to_dict(model) #model转字典
             try:
                 DynamicModel.create(**dict_)
                 flash('保存成功')
             except:
+                flash("保存失败，请注意编号防止冲突")
                 utils.flash_errors(form)
         else:
             utils.flash_errors(form)
@@ -142,10 +141,6 @@ def notifyedit():
 @main.route('/dishlist', methods=['GET', 'POST'])
 @login_required
 def dishlist():
-    # if current_user.user_type == 'user':
-    #     return common_list(DynamicModel=dish, ReliantModel=store, view='dishlist.html')
-    # elif current_user.user_type == 'store_manager':
-    #     return common_list(DynamicModel=dish, ReliantModel=store, view='')
     return common_list(DynamicModel=dish, ReliantModel=store, view='dishlist.html')
 
 #编辑菜品信息
@@ -181,7 +176,6 @@ def dealedit():
 @main.route('/oderdish/<dish_id>', methods=['GET', 'POST'])
 @login_required
 def orderdish(dish_id):
-
     model = dish.get(dish.id == dish_id)
     store_id = model.store_id
     create_deal(store_id)
@@ -190,10 +184,15 @@ def orderdish(dish_id):
 
 
 def create_deal(store_id):
-    query = deal.select()
+    query = deal.select().order_by(deal.id.desc())
     num = query.count()
     deal_dict = {}
-    deal_dict['id'] = utils.strID_increase(num)
+    if num == 0:
+        deal_dict['id'] = utils.strID_increase(num)
+    else:
+        query = utils.query_to_list(query)
+        obj = query[0]
+        deal_dict['id'] = utils.strID_increase(obj['id'])
     deal_dict['is_finish'] = False
     deal_dict['deal_begin_time'] = datetime.datetime.now()
     deal_dict['deal_finish_time'] = datetime.datetime.now()
